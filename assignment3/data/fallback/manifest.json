@@ -1,0 +1,44 @@
+{
+  "files": {
+    "LICENSE.md": {
+      "bytes": 1278,
+      "sha256": "1adb558b72b4bfc73265a77688556d8637e14f289573801c192e703d3ec551e7"
+    },
+    "README.md": {
+      "bytes": 3394,
+      "sha256": "cb220f298fb4f2b65c9580ca8abffe031473245d1b1d24f1d2be23490329ef26"
+    },
+    "baseline.mp4": {
+      "bytes": 78438,
+      "sha256": "fed83a9242088905cfee00481da1877007cf3bb08b439cb710ef988c8febf9ae"
+    },
+    "fast_motion.mp4": {
+      "bytes": 108095,
+      "sha256": "8ca38475e984e324d54df14cf842b3d9052b6562745efa392dbe16d245c542f2"
+    },
+    "ground_truth.json": {
+      "bytes": 381282,
+      "sha256": "18f9e66ea7e0ec650799a78247772333ea13c709165f1901a2f04e1ae9a94a58"
+    },
+    "illumination.mp4": {
+      "bytes": 134784,
+      "sha256": "fe3fb9ea30fb84a7c4d155b763640eb1af5bb18210353c16ee8334be4d20af7f"
+    },
+    "occlusion.mp4": {
+      "bytes": 68236,
+      "sha256": "4235ad95f3b9822e09de2e5eeb5cc5df7a4a7c1a86fb7f9512aa26012507f795"
+    },
+    "planar_target.png": {
+      "bytes": 12333,
+      "sha256": "294fd131cf850731e76e180fdce2ab7460fbcdad540f8575802075d0d26e9a0b"
+    }
+  },
+  "generator": {
+    "ffmpeg_version": "7.1",
+    "path": "assignment3/data/generate_fallback.py",
+    "sha256": "e895cb6b2e04ecc0a4e1c6f590a79d45faa2057298ff0be37bbe16c9d9b40213"
+  },
+  "license": "Course Educational Asset License 1.0 (see LICENSE.md)",
+  "package_version": "1.0",
+  "schema_version": 1
+}

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cv-16720-course-materials"
+version = "1.0.0"
+description = "Fall 2026 16-720 Computer Vision programming assignments"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26,<3",
+  "scipy>=1.11,<2",
+  "matplotlib>=3.8,<4",
+  "opencv-python-headless>=4.8,<5",
+  "scikit-image>=0.22,<1",
+  "scikit-learn>=1.4,<2",
+  "imageio>=2.34,<3",
+  "imageio-ffmpeg>=0.5,<1",
+  "torch>=2.2",
+  "torchvision>=0.17",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ipykernel>=6.29",
+  "nbclient>=0.10",
+  "nbformat>=5.10",
+  "pytest>=8.0",
+]
+
+[tool.setuptools]
+py-modules = []
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["assignment1/tests", "assignment2/tests", "assignment3/tests", "tools/tests"]
+python_files = ["test_*.py"]

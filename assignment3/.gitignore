@@ -1,0 +1,5 @@
+artifacts/
+data/generated/
+**/__pycache__/
+*.py[cod]
+.ipynb_checkpoints/

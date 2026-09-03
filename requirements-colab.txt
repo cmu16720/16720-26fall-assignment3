@@ -1,0 +1,7 @@
+# Colab already supplies NumPy, Matplotlib, PyTorch, and torchvision.
+# These ranges document the APIs used without replacing the Colab runtime stack.
+opencv-python-headless>=4.8,<5
+scikit-image>=0.22,<1
+scikit-learn>=1.4,<2
+imageio>=2.34,<3
+imageio-ffmpeg>=0.5,<1

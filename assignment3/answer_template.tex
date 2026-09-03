@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\newcommand{\studentname}{YOUR NAME}
+\newcommand{\andrewid}{YOUR ANDREW ID}
+\newcommand{\answerlabel}[2]{%
+  \clearpage
+  \section*{#1: #2}
+  \addcontentsline{toc}{section}{#1: #2}
+}
+\newenvironment{response}{\color{black}}{}
+
+\begin{document}
+
+\begin{center}
+  {\Large 16-720 Computer Vision, Fall 2026}\\[0.4em]
+  {\LARGE Programming Assignment 3: Geometry in Motion}\\[1em]
+  \textbf{Name:} \studentname \hfill \textbf{Andrew ID:} \andrewid
+\end{center}
+
+\tableofcontents
+
+\answerlabel{A1}{Derive the DLT constraints}
+\begin{response}
+% Answer A1.1--A1.5 here. Keep every subpart visibly labeled.
+\textbf{A1.1}\par
+\textbf{A1.2}\par
+\textbf{A1.3}\par
+\textbf{A1.4}\par
+\textbf{A1.5}\par
+\end{response}
+
+\answerlabel{A2}{Normalize a small correspondence set}
+\begin{response}
+\textbf{A2.1}\par
+\textbf{A2.2}\par
+\textbf{A2.3}\par
+\textbf{A2.4}\par
+\textbf{A2.5}\par
+\end{response}
+
+\answerlabel{A3}{RANSAC sampling without replacement}
+\begin{response}
+\textbf{A3.1}\par
+\textbf{A3.2}\par
+\textbf{A3.3}\par
+\textbf{A3.4}\par
+\end{response}
+
+\answerlabel{A4}{Local motion with additive brightness change}
+\begin{response}
+\textbf{A4.1}\par
+\textbf{A4.2}\par
+\textbf{A4.3}\par
+\textbf{A4.4}\par
+\textbf{A4.5}\par
+\end{response}
+
+\answerlabel{B1}{Read the geometry pipeline}
+\begin{response}
+\textbf{B1.1}\par
+\textbf{B1.2}\par
+\textbf{B1.3}\par
+\textbf{B1.4}\par
+\textbf{B1.5}\par
+\end{response}
+
+\answerlabel{B2}{Normalized DLT evidence}
+\begin{response}
+Summarize implementation decisions, tests, and any numerical failure evidence. Reference notebook figures rather than copying code.
+\end{response}
+
+\answerlabel{B3}{RANSAC evaluation}
+\begin{response}
+Include the required outlier-fraction table, corner error, precision/recall, runtime, and interpretation.
+\end{response}
+
+\answerlabel{B4}{Coarse-to-fine Lucas--Kanade translation}
+\begin{response}
+Include pyramid/sign checks, level traces, plots, and the initialization-versus-brightness analysis.
+\end{response}
+
+\answerlabel{C1}{Planar target and application}
+\begin{response}
+Document the capture and include a raw still, model rationale, and predicted violation.
+\end{response}
+
+\answerlabel{C2}{System design and substantive improvement}
+\begin{response}
+Describe the baseline state machine, validity gates, improvement, and diagnostic outputs.
+\end{response}
+
+\answerlabel{C3}{AI-comprehension reflection}
+\begin{response}
+Write 200--300 words and answer all four prompts. If no generative AI was used, follow the alternative in the specification.
+\end{response}
+
+\answerlabel{D1}{Controlled robustness study}
+\begin{response}
+Include the capture table, prior predictions, manual-corner metrics, method comparisons, representative views, and explanation.
+\end{response}
+
+\answerlabel{D2}{When a good-looking warp is wrong}
+\begin{response}
+Include success/failure evidence and answer all three interpretation questions.
+\end{response}
+
+\answerlabel{D3}{Hero Result}
+\begin{response}
+Embed the static preview, identify the submitted artifact, and state the assumption and non-claim shown in it.
+\end{response}
+
+\answerlabel{E}{Optional extension}
+\begin{response}
+Delete this page if no extension is submitted. State whether you opt into the public showcase.
+\end{response}
+
+\answerlabel{Acknowledgments}{Collaboration, resources, data, weights, and AI use}
+\begin{response}
+List every collaborator and outside resource. Describe any generative-AI use in permitted sections. State ``none'' explicitly where appropriate.
+\end{response}
+
+\end{document}
