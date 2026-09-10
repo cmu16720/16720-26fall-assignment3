@@ -9,27 +9,39 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-from assignment3.common.pa3_utils import (
-    corner_transfer_rmse,
-    make_homography_case,
-    make_translation_pair,
-    project_points,
-)
+
+RELEASE_ROOT = Path(__file__).resolve().parents[1]
 
 
-ASSIGNMENT_ROOT = Path(__file__).resolve().parents[1]
+def _load(name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    # Register before executing: dataclasses resolves annotations through
+    # sys.modules, so a module loaded purely by path would fail to define one.
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+# Loaded by path rather than package so the same file works from the staff tree
+# and from the flat student repository.
+utils = _load("pa3_public_utils", RELEASE_ROOT / "common" / "pa3_utils.py")
+corner_transfer_rmse = utils.corner_transfer_rmse
+make_homography_case = utils.make_homography_case
+make_translation_pair = utils.make_translation_pair
+project_points = utils.project_points
+
 IMPLEMENTATION_PATH = Path(
-    os.environ.get("PA3_IMPLEMENTATION_PATH", ASSIGNMENT_ROOT / "student" / "pa3.py")
+    os.environ.get("PA3_IMPLEMENTATION_PATH", RELEASE_ROOT / "student" / "pa3.py")
 )
-SPEC = importlib.util.spec_from_file_location("pa3_public_candidate", IMPLEMENTATION_PATH)
-assert SPEC is not None and SPEC.loader is not None
-pa3 = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(pa3)
+pa3 = _load("pa3_public_candidate", IMPLEMENTATION_PATH)
 
 
 def test_normalize_square_has_released_values() -> None:
@@ -70,8 +82,15 @@ def test_ransac_is_deterministic_and_accurate_on_released_case() -> None:
     second_h, second_mask, second_info = outputs[1]
     np.testing.assert_allclose(first_h, second_h, atol=1e-12)
     np.testing.assert_array_equal(first_mask, second_mask)
-    assert first_info["trials"] == second_info["trials"] <= 5000
+    assert first_info["trials"] == second_info["trials"] <= pa3.RANSAC_MAX_TRIALS
     assert first_info["best_sample"] == second_info["best_sample"]
+    assert isinstance(first_info["best_sample"], tuple) and len(first_info["best_sample"]) == 4
+    assert first_info["adaptive_budget"] >= 1
+    errors = np.asarray(first_info["errors"], dtype=np.float64)
+    assert errors.shape == (100,)
+    np.testing.assert_allclose(
+        errors, pa3.symmetric_transfer_error(first_h, case["src_xy"], case["dst_xy"]), atol=1e-9
+    )
     assert first_mask.dtype == np.bool_ and first_mask.shape == (100,)
     assert corner_transfer_rmse(first_h, case["H_true"], case["image_size"]) < 3.0
 
@@ -82,10 +101,20 @@ def test_four_level_lk_recovers_large_translation() -> None:
     np.testing.assert_allclose(estimate, true_p, atol=0.15)
     assert history[0]["phase"] == "level_start" and history[0]["level"] == 3
     assert history[-1]["phase"] == "level_end" and history[-1]["level"] == 0
-    assert all("p_full" in entry for entry in history)
+    required = {"phase", "level", "p_level", "p_full", "status"}
+    assert all(required <= set(entry) for entry in history)
+    assert {entry["phase"] for entry in history} <= {"level_start", "iteration", "level_end"}
+    iterations = [entry for entry in history if entry["phase"] == "iteration"]
+    assert iterations and all("photometric_rmse" in entry for entry in iterations)
+    for entry in history:
+        np.testing.assert_allclose(
+            entry["p_full"], np.asarray(entry["p_level"]) * 2.0 ** entry["level"], atol=1e-12
+        )
 
 
 def test_released_constants() -> None:
     assert pa3.RANSAC_MAX_TRIALS == 5000
     assert pa3.LK_MAX_ITERS == 50
     assert pa3.LK_TOL == pytest.approx(1e-3)
+    assert pa3.LK_MIN_VALID == 25
+    assert pa3.LK_MAX_CONDITION == pytest.approx(1e6)

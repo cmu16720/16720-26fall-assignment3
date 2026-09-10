@@ -14,16 +14,28 @@ import urllib.request
 import numpy as np
 
 
-ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+# Works from the staff tree (assignment3/data/...) and from the flat student
+# repository (data/...), where there is no outer package directory.
+ASSIGNMENT_ROOT = Path(__file__).resolve().parents[1]
+ROOT = ASSIGNMENT_ROOT.parent if ASSIGNMENT_ROOT.name.startswith("assignment") else ASSIGNMENT_ROOT
+for _candidate in (ROOT, ASSIGNMENT_ROOT):
+    if str(_candidate) not in sys.path:
+        sys.path.insert(0, str(_candidate))
 
-from assignment3.common.pa3_utils import make_homography_case, make_translation_pair  # noqa: E402
-from assignment3.data.generate_fallback import (  # noqa: E402
-    DEFAULT_FALLBACK_ROOT,
-    generate_fallback_package,
-    verify_fallback_package,
-)
+try:  # staff tree
+    from assignment3.common.pa3_utils import make_homography_case, make_translation_pair  # noqa: E402
+    from assignment3.data.generate_fallback import (  # noqa: E402
+        DEFAULT_FALLBACK_ROOT,
+        generate_fallback_package,
+        verify_fallback_package,
+    )
+except ModuleNotFoundError:  # flat student repository
+    from common.pa3_utils import make_homography_case, make_translation_pair  # noqa: E402
+    from data.generate_fallback import (  # noqa: E402
+        DEFAULT_FALLBACK_ROOT,
+        generate_fallback_package,
+        verify_fallback_package,
+    )
 
 
 ASSETS = {
@@ -76,7 +88,7 @@ def generate_synthetic(output_root: Path) -> list[Path]:
         "one_pixel": ((1.0, 0.0), 0.0, 16721),
         "large": ((8.0, -5.0), 0.0, 16722),
         "subpixel": ((3.25, -2.5), 0.0, 16723),
-        "brightness_violation": ((2.0, 1.0), 0.12, 16724),
+        "brightness_violation": ((2.0, 1.0), 0.2, 16724),
     }
     for name, (shift, beta, seed) in translation_specs.items():
         template, image, true_p = make_translation_pair(shift, beta=beta, seed=seed)

@@ -11,7 +11,9 @@ Generated cases include:
 - textured translation pairs for zero, one-pixel, and larger displacement checks; and
 - an additive-brightness pair used to demonstrate violation of B4's `beta=0` assumption.
 
-No external data or personal information is used. Generated files live below `data/generated/`, are reproducible, and are excluded from a source-only release when space is constrained. These cases support implementation and offline smoke checks; they do not replace the graded B4 `wall` row.
+No external data or personal information is used. Generated files live below `data/generated/`; the starter notebook recreates the tree on first run.
+
+The notebooks and tests call `make_homography_case` and `make_translation_pair` directly rather than loading these files. The `.npz` copies exist so the exact cases can be inspected, diffed, or reloaded. They support implementation and offline smoke checks; they do not replace the graded B4 `wall` row.
 
 ## 3. Required B4 sequence and optional debug sequence
 

@@ -679,6 +679,70 @@ def draw_projected_quad(
     return canvas
 
 
+def draw_planar_overlay(
+    frame_rgb: np.ndarray,
+    H_target_to_frame: np.ndarray,
+    target_size: tuple[int, int],
+    *,
+    label: str = "PLANAR AR",
+    valid: bool = True,
+    alpha: float = 0.5,
+) -> np.ndarray:
+    """Warp a supplied default AR panel onto the tracked plane.
+
+    This is the released reference overlay for Part C.  It builds a labelled
+    grid in target coordinates, warps it through ``H_target_to_frame``, blends
+    it over a copy of the frame, and outlines the projected boundary.  A stale
+    or unconfirmed map is drawn in amber so a viewer can tell the two states
+    apart.  Replacing it with your own artwork is fine; the graded work is the
+    geometry that positions it, not the panel itself.
+    """
+
+    if not 0.0 <= alpha <= 1.0:
+        raise ValueError("alpha must lie in [0, 1]")
+    target_width, target_height = (int(target_size[0]), int(target_size[1]))
+    if min(target_width, target_height) < 2:
+        raise ValueError("target_size must be at least 2 x 2")
+    canvas = to_uint8_rgb(frame_rgb)
+    matrix = np.asarray(H_target_to_frame, dtype=np.float64)
+    if matrix.shape != (3, 3) or not np.all(np.isfinite(matrix)):
+        raise ValueError("H_target_to_frame must be a finite 3 x 3 matrix")
+    if abs(float(np.linalg.det(matrix))) <= EPS:
+        return canvas
+    try:
+        import cv2
+    except ImportError as exc:
+        raise RuntimeError("OpenCV is required for supplied visualization") from exc
+
+    panel = np.zeros((target_height, target_width, 3), dtype=np.uint8)
+    panel[:] = (16, 118, 145) if valid else (218, 128, 35)
+    for x in range(0, target_width, 24):
+        cv2.line(panel, (x, 0), (x, target_height - 1), (235, 245, 250), 1, cv2.LINE_AA)
+    for y in range(0, target_height, 24):
+        cv2.line(panel, (0, y), (target_width - 1, y), (235, 245, 250), 1, cv2.LINE_AA)
+    if label:
+        cv2.putText(panel, label, (18, target_height // 2 + 8), cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7, (255, 255, 255), 2, cv2.LINE_AA)
+
+    size = (canvas.shape[1], canvas.shape[0])
+    warped = cv2.warpPerspective(panel, matrix, size)
+    mask = cv2.warpPerspective(
+        np.full((target_height, target_width), 255, dtype=np.uint8),
+        matrix,
+        size,
+        flags=cv2.INTER_NEAREST,
+    )
+    active = mask > 0
+    if np.any(active):
+        blended = (1.0 - alpha) * canvas[active] + alpha * warped[active]
+        canvas[active] = np.clip(blended, 0, 255).astype(np.uint8)
+    corners, corners_valid = project_points(matrix, image_corners((target_width, target_height)))
+    if corners_valid.all():
+        color = (30, 225, 100) if valid else (255, 165, 45)
+        cv2.polylines(canvas, [np.rint(corners).astype(np.int32)], True, color, 3, cv2.LINE_AA)
+    return canvas
+
+
 def resize_long_edge(image: np.ndarray, max_long_edge: int = 720) -> tuple[np.ndarray, float]:
     """Resize while preserving aspect ratio and return output/source coordinate scale."""
 
@@ -714,13 +778,21 @@ def read_video(
     *,
     max_frames: int | None = None,
     max_long_edge: int = 720,
+    frame_stride: int = 1,
 ) -> tuple[list[np.ndarray], VideoMetadata]:
-    """Decode an RGB video and record the resize transform."""
+    """Decode an RGB video and record the resize transform.
+
+    ``frame_stride`` keeps every ``frame_stride``-th decoded frame, which is the
+    cheapest way to shorten a long capture without changing any geometry.  The
+    returned metadata reports the effective frame rate after decimation.
+    """
 
     try:
         import cv2
     except ImportError as exc:
         raise RuntimeError("OpenCV is required for supplied video decoding") from exc
+    if not isinstance(frame_stride, (int, np.integer)) or frame_stride < 1:
+        raise ValueError("frame_stride must be a positive integer")
     source = Path(path)
     capture = cv2.VideoCapture(str(source))
     if not capture.isOpened():
@@ -730,11 +802,16 @@ def read_video(
     height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frames: list[np.ndarray] = []
     scale = 1.0
+    decoded = 0
     try:
         while max_frames is None or len(frames) < max_frames:
             ok, bgr = capture.read()
             if not ok:
                 break
+            keep = decoded % int(frame_stride) == 0
+            decoded += 1
+            if not keep:
+                continue
             rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
             rgb, scale = resize_long_edge(rgb, max_long_edge=max_long_edge)
             frames.append(rgb)
@@ -742,7 +819,7 @@ def read_video(
         capture.release()
     if not frames:
         raise ValueError(f"video contained no decodable frames: {source}")
-    return frames, VideoMetadata(fps, width, height, scale, len(frames))
+    return frames, VideoMetadata(fps / int(frame_stride), width, height, scale, len(frames))
 
 
 def write_h264_video(path: str | Path, frames: Iterable[np.ndarray], *, fps: float = 30.0) -> Path:
@@ -813,6 +890,7 @@ __all__ = [
     "corner_transfer_rmse",
     "convex_hull",
     "draw_correspondences",
+    "draw_planar_overlay",
     "draw_projected_quad",
     "extract_sift",
     "from_homogeneous",

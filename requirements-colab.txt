@@ -5,3 +5,5 @@ scikit-image>=0.22,<1
 scikit-learn>=1.4,<2
 imageio>=2.34,<3
 imageio-ffmpeg>=0.5,<1
+
+pytest>=8,<10

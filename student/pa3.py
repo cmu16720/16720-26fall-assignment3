@@ -15,29 +15,22 @@ from typing import Any
 
 import numpy as np
 
-try:  # Works both in the staff repository and in the assignment release.
-    from assignment3.common.pa3_utils import (
-        bilinear_sample,
-        from_homogeneous,
-        gaussian_pyramid,
-        image_gradients,
-        to_homogeneous,
-    )
-except ModuleNotFoundError:  # pragma: no cover - exercised in the release tree.
-    from common.pa3_utils import (
-        bilinear_sample,
-        from_homogeneous,
-        gaussian_pyramid,
-        image_gradients,
-        to_homogeneous,
-    )
+from common.pa3_utils import (
+    bilinear_sample,
+    from_homogeneous,
+    gaussian_pyramid,
+    image_gradients,
+    to_homogeneous,
+)
 
 
-RANSAC_MAX_TRIALS = 5000
-LK_MAX_ITERS = 50
-LK_TOL = 1e-3
-LK_MIN_VALID = 25
-LK_MAX_CONDITION = 1e6
+# Released contract constants.  Import these instead of retyping the values;
+# the tests and the rubric refer to them by name.
+RANSAC_MAX_TRIALS = 5000  # hard cap on RANSAC trials, degenerate draws included
+LK_MAX_ITERS = 50  # maximum LK iterations per pyramid level
+LK_TOL = 1e-3  # LK convergence threshold on ||delta_p||, in level pixels
+LK_MIN_VALID = 25  # minimum jointly valid pixels before a level gives up
+LK_MAX_CONDITION = 1e6  # maximum accepted condition number of the LK design matrix
 
 
 def normalize_points(xy: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -68,6 +61,10 @@ def estimate_homography_dlt(src_xy: np.ndarray, dst_xy: np.ndarray) -> np.ndarra
     solve homogeneous least squares by SVD, reshape with ``order='F'``, and
     denormalize.  At least four correspondences and design rank at least eight
     are required.  Do not call an OpenCV homography estimator.
+
+    Scale the result so that ``H[2, 2] == 1`` when that entry is safely
+    nonzero; otherwise return the unit-Frobenius-norm representative whose
+    largest-magnitude entry is positive.
     """
 
     # TODO(student): normalize, construct A, solve, reshape, and denormalize.
@@ -85,6 +82,7 @@ def symmetric_transfer_error(H: np.ndarray, src_xy: np.ndarray, dst_xy: np.ndarr
 
     Invalid homogeneous scales or a noninvertible homography produce ``inf``
     for affected entries, never silently clipped coordinates or NaNs.
+    Multiplying ``H`` by any nonzero scalar must leave every entry unchanged.
     """
 
     # TODO(student): compute safe forward and backward projections and errors.
@@ -108,8 +106,25 @@ def ransac_homography(
     the earlier trial.  Refit from all returned inliers.
 
     Returns:
-        ``(H, inlier_mask, info)`` where ``info`` contains at least ``trials``,
-        ``adaptive_budget``, ``best_sample``, and ``errors``.
+        ``(H, inlier_mask, info)``.  ``inlier_mask`` is a ``numpy.bool_`` array
+        of shape ``(N,)``.  ``info`` contains at least:
+
+        ``trials``
+            ``int``; trials actually attempted, degenerate draws included.
+        ``adaptive_budget``
+            ``int``; the final finite-population budget, capped at
+            :data:`RANSAC_MAX_TRIALS`.
+        ``best_sample``
+            ``tuple`` of four ``int``; the minimal sample that set the stopping
+            budget.  Return a tuple rather than an array so that two runs
+            compare with ``==``.
+        ``errors``
+            ``float64`` array of shape ``(N,)``; the symmetric transfer error
+            of every correspondence under the returned ``H``.
+
+    Raises:
+        RuntimeError: If the trial budget is exhausted without any four-point
+        model reaching a four-correspondence consensus.
     """
 
     # TODO(student): implement deterministic finite-population RANSAC and refit.
@@ -126,9 +141,40 @@ def lucas_kanade_refine(
 
     Level 0 is full resolution.  At each level, sample ``image(x+p)``, form
     residual ``template(x)-image(x+p)``, solve ``[Ix Iy] delta ~= residual``
-    with least squares, and update ``p += delta``.  Use at most 50 iterations
-    per level and stop when ``||delta|| < 1e-3`` level pixels.  Return the final
-    full-resolution ``(u, v)`` and per-level/per-iteration history.
+    with least squares, and update ``p += delta``.  Run at most
+    :data:`LK_MAX_ITERS` iterations per level and stop once ``||delta||`` falls
+    below :data:`LK_TOL` level pixels.  End a level early when fewer than
+    :data:`LK_MIN_VALID` pixels are jointly valid, when the least-squares rank
+    is below two, or when the design-matrix condition number exceeds
+    :data:`LK_MAX_CONDITION`.  Never form ``(A.T @ A)`` and invert it.
+
+    Returns:
+        ``(p, history)``.  ``p`` is the final full-resolution ``(u, v)``.
+        ``history`` is a list of dictionaries that begins with the
+        ``level_start`` record of the coarsest level and ends with the
+        ``level_end`` record of level zero.  Every record contains:
+
+        ``phase``
+            ``str``; ``"level_start"``, ``"iteration"``, or ``"level_end"``.
+        ``level``
+            ``int``; pyramid level, zero being full resolution.
+        ``p_level``
+            ``float64`` array of shape ``(2,)``; the estimate in that level's
+            pixels.
+        ``p_full``
+            ``float64`` array of shape ``(2,)``; the same estimate rescaled to
+            full resolution, ``p_level * 2 ** level``.
+        ``status``
+            ``str``; one of ``"start"``, ``"iterate"``, ``"converged"``,
+            ``"max_iterations"``, ``"singular"``, ``"ill_conditioned"``, or
+            ``"insufficient_overlap"``.
+
+        Records with ``phase == "iteration"`` additionally contain
+        ``photometric_rmse``, the root-mean-square residual over that
+        iteration's jointly valid pixels.  A ``level_end`` record carries the
+        status that ended the level.  Extra diagnostic keys are welcome; the
+        keys above are the graded minimum and the supplied notebook cells read
+        them by name.
 
     This B4 function is a separate translation study.  It assumes ``beta=0``
     (ordinary brightness constancy) and does not refine a general homography.

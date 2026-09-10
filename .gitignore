@@ -1,14 +1,6 @@
-.DS_Store
-.venv/
 __pycache__/
 *.py[cod]
-*.egg-info/
 .pytest_cache/
-.ruff_cache/
-.ipynb_checkpoints/
+.venv/
 artifacts/
-**/data/downloaded/
-**/data/cache/
-assignment3/data/generated/downloads/
-assignment3/data/generated/vgg_affine/
-tmp/
+data/generated/
