@@ -32,7 +32,7 @@ def validate_xy(xy: np.ndarray, *, min_points: int = 0, name: str = "xy") -> np.
 
     array = np.asarray(xy, dtype=np.float64)
     if array.ndim != 2 or array.shape[1] != 2:
-        raise ValueError(f"{name} must have shape (N, 2); received {array.shape}")
+        raise ValueError(f"{name} must have shape (N, 2), received {array.shape}")
     if array.shape[0] < min_points:
         raise ValueError(f"{name} must contain at least {min_points} points")
     if not np.all(np.isfinite(array)):
@@ -56,7 +56,7 @@ def from_homogeneous(xyh: np.ndarray, *, eps: float = EPS) -> tuple[np.ndarray, 
 
     points = np.asarray(xyh, dtype=np.float64)
     if points.ndim != 2 or points.shape[1] != 3:
-        raise ValueError(f"xyh must have shape (N, 3); received {points.shape}")
+        raise ValueError(f"xyh must have shape (N, 3), received {points.shape}")
     if eps <= 0 or not np.isfinite(eps):
         raise ValueError("eps must be finite and positive")
     valid = np.all(np.isfinite(points), axis=1) & (np.abs(points[:, 2]) > eps)
@@ -213,7 +213,7 @@ def make_textured_image(shape: tuple[int, int] = (128, 160), *, seed: int = SHAR
     for _ in range(3):
         noise = _gaussian_blur5(noise)
     yy, xx = np.indices((height, width), dtype=np.float64)
-    # Random band-limited structure dominates; weak sinusoids keep gradients
+    # Random band-limited structure dominates. Weak sinusoids keep gradients
     # present near borders without making the texture strongly repetitive.
     # This yields a released large-motion case where a pyramid materially
     # expands the convergence basin instead of both methods locking to a
@@ -694,7 +694,7 @@ def draw_planar_overlay(
     grid in target coordinates, warps it through ``H_target_to_frame``, blends
     it over a copy of the frame, and outlines the projected boundary.  A stale
     or unconfirmed map is drawn in amber so a viewer can tell the two states
-    apart.  Replacing it with your own artwork is fine; the graded work is the
+    apart.  You may replace it with your own artwork. The graded work is the
     geometry that positions it, not the panel itself.
     """
 

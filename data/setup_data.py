@@ -117,9 +117,9 @@ def _safe_extract(archive: Path, destination: Path) -> None:
                 raise RuntimeError(f"archive contains unsafe path: {member.name}")
             if member.issym() or member.islnk() or member.isdev():
                 raise RuntimeError(f"archive contains unsupported member type: {member.name}")
-        # Copy validated regular files/directories ourselves.  This is safe,
-        # warning-free, and compatible with Python 3.10; tarfile's modern
-        # filter="data" interface is newer.
+        # Copy validated regular files and directories ourselves. This is safe,
+        # prints no warnings, and works on Python 3.10, which predates tarfile's
+        # filter="data" option.
         for member in tar.getmembers():
             member_path = destination / member.name
             if member.isdir():
@@ -187,7 +187,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--external",
         action="store_true",
-        help="download all Oxford data (required wall plus optional/debug graf; legacy-compatible)",
+        help="download all Oxford data (required wall plus optional graf for debugging)",
     )
     parser.add_argument(
         "--fallback",

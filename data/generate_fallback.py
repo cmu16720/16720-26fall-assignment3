@@ -47,7 +47,7 @@ def _opencv():
 
 
 def make_planar_target() -> np.ndarray:
-    """Return the deterministic, course-authored RGB target image."""
+    """Return the deterministic, course-made RGB target image."""
 
     cv2 = _opencv()
     yy, xx = np.indices((TARGET_HEIGHT, TARGET_WIDTH))
@@ -272,7 +272,7 @@ def generate_fallback_package(output_root: Path = DEFAULT_FALLBACK_ROOT) -> list
     ground_truth = {
         "schema_version": 1,
         "package_version": FALLBACK_VERSION,
-        "authorship": "course-authored procedural imagery; no third-party visual content",
+        "authorship": "course-made procedural imagery with no third-party visual content",
         "seed": SHARED_SEED,
         "width": FRAME_WIDTH,
         "height": FRAME_HEIGHT,
@@ -282,7 +282,7 @@ def generate_fallback_package(output_root: Path = DEFAULT_FALLBACK_ROOT) -> list
         "target_size": [TARGET_WIDTH, TARGET_HEIGHT],
         "corner_order": "top-left, top-right, bottom-right, bottom-left in (x,y)",
         "evaluation_frames": list(EVALUATION_FRAMES),
-        "student_requirement": "manual annotations remain required; oracle metadata is for verification",
+        "student_requirement": "hand-marked corners are still required, and these values are only for checking them",
         "clips": clips,
     }
     ground_truth_path = output_root / "ground_truth.json"

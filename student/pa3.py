@@ -2,7 +2,7 @@
 
 Do not change public function names, argument order, return structure, or the
 released numerical conventions.  Geometry inputs are finite ``float64``
-arrays; points have shape ``(N, 2)`` and order ``(x, y)``.  No function may
+arrays. Points have shape ``(N, 2)`` and order ``(x, y)``.  No function may
 mutate an input.
 
 Generative AI is not permitted for these required Part B implementations.
@@ -26,8 +26,8 @@ from common.pa3_utils import (
 )
 
 
-# Released contract constants.  Import these instead of retyping the values;
-# the tests and the rubric refer to them by name.
+# Released contract constants.  Import these instead of retyping the values.
+# The tests and the rubric refer to them by name.
 RANSAC_MAX_TRIALS = 5000  # hard cap on RANSAC trials, degenerate draws included
 LK_MAX_ITERS = 50  # maximum LK iterations per pyramid level
 LK_TOL = 1e-3  # LK convergence threshold on ||delta_p||, in level pixels
@@ -65,12 +65,12 @@ def estimate_homography_dlt(src_xy: np.ndarray, dst_xy: np.ndarray) -> np.ndarra
     are required.  Do not call an OpenCV homography estimator.
 
     Scale the result so that ``H[2, 2] == 1`` when that entry is safely
-    nonzero; otherwise return the unit-Frobenius-norm representative whose
+    nonzero. Otherwise return the unit-Frobenius-norm representative whose
     largest-magnitude entry is positive.
     """
 
     # TODO(student): normalize, construct A, solve, reshape, and denormalize.
-    # A minimal 8 x 9 system needs a full right-singular basis; a tall system
+    # A minimal 8 x 9 system needs a full right-singular basis. A tall system
     # may use economy SVD without losing any of its nine right vectors.
     raise NotImplementedError("TODO(student): implement estimate_homography_dlt")
 
@@ -78,7 +78,7 @@ def estimate_homography_dlt(src_xy: np.ndarray, dst_xy: np.ndarray) -> np.ndarra
 def symmetric_transfer_error(H: np.ndarray, src_xy: np.ndarray, dst_xy: np.ndarray) -> np.ndarray:
     """Return mean squared forward/backward transfer error for every match.
 
-    The output has shape ``(N,)`` and units pixel squared:
+    The output has shape ``(N,)`` and units of pixels squared:
 
     ``0.5 * (||project(H, src)-dst||^2 + ||project(H^-1, dst)-src||^2)``.
 
@@ -112,16 +112,16 @@ def ransac_homography(
         of shape ``(N,)``.  ``info`` contains at least:
 
         ``trials``
-            ``int``; trials actually attempted, degenerate draws included.
+            ``int``: trials actually attempted, degenerate draws included.
         ``adaptive_budget``
-            ``int``; the final finite-population budget, capped at
+            ``int``: the final finite-population budget, capped at
             :data:`RANSAC_MAX_TRIALS`.
         ``best_sample``
-            ``tuple`` of four ``int``; the minimal sample that set the stopping
+            ``tuple`` of four ``int``: the minimal sample that set the stopping
             budget.  Return a tuple rather than an array so that two runs
             compare with ``==``.
         ``errors``
-            ``float64`` array of shape ``(N,)``; the symmetric transfer error
+            ``float64`` array of shape ``(N,)``: the symmetric transfer error
             of every correspondence under the returned ``H``.
 
     Raises:
@@ -157,24 +157,24 @@ def lucas_kanade_refine(
         ``level_end`` record of level zero.  Every record contains:
 
         ``phase``
-            ``str``; ``"level_start"``, ``"iteration"``, or ``"level_end"``.
+            ``str``: ``"level_start"``, ``"iteration"``, or ``"level_end"``.
         ``level``
-            ``int``; pyramid level, zero being full resolution.
+            ``int``: pyramid level, with zero at full resolution.
         ``p_level``
-            ``float64`` array of shape ``(2,)``; the estimate in that level's
+            ``float64`` array of shape ``(2,)``: the estimate in that level's
             pixels.
         ``p_full``
-            ``float64`` array of shape ``(2,)``; the same estimate rescaled to
+            ``float64`` array of shape ``(2,)``: the same estimate rescaled to
             full resolution, ``p_level * 2 ** level``.
         ``status``
-            ``str``; one of ``"start"``, ``"iterate"``, ``"converged"``,
+            ``str``: one of ``"start"``, ``"iterate"``, ``"converged"``,
             ``"max_iterations"``, ``"singular"``, ``"ill_conditioned"``, or
             ``"insufficient_overlap"``.
 
         Records with ``phase == "iteration"`` additionally contain
         ``photometric_rmse``, the root-mean-square residual over that
         iteration's jointly valid pixels.  A ``level_end`` record carries the
-        status that ended the level.  Extra diagnostic keys are welcome; the
+        status that ended the level.  Extra diagnostic keys are fine. The
         keys above are the graded minimum and the supplied notebook cells read
         them by name.
 

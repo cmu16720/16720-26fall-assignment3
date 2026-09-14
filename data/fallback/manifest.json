@@ -1,12 +1,12 @@
 {
   "files": {
     "LICENSE.md": {
-      "bytes": 1278,
-      "sha256": "1adb558b72b4bfc73265a77688556d8637e14f289573801c192e703d3ec551e7"
+      "bytes": 1277,
+      "sha256": "0deb290b99deec263e1d0d5bd6bda2c6f0fbd58f2b3d0e77920510f639f3b720"
     },
     "README.md": {
-      "bytes": 3394,
-      "sha256": "cb220f298fb4f2b65c9580ca8abffe031473245d1b1d24f1d2be23490329ef26"
+      "bytes": 3256,
+      "sha256": "d5bd454b7bb83800fe2ecc848831b67e96a474d94b5312c544c0d76763225fc5"
     },
     "baseline.mp4": {
       "bytes": 78438,
@@ -17,8 +17,8 @@
       "sha256": "8ca38475e984e324d54df14cf842b3d9052b6562745efa392dbe16d245c542f2"
     },
     "ground_truth.json": {
-      "bytes": 381282,
-      "sha256": "18f9e66ea7e0ec650799a78247772333ea13c709165f1901a2f04e1ae9a94a58"
+      "bytes": 381294,
+      "sha256": "ca91e2f745144f34b2ed72875705ef1891644eb21f1cfccbc4ccc31ac1503acd"
     },
     "illumination.mp4": {
       "bytes": 134784,
@@ -36,7 +36,7 @@
   "generator": {
     "ffmpeg_version": "7.1",
     "path": "assignment3/data/generate_fallback.py",
-    "sha256": "e895cb6b2e04ecc0a4e1c6f590a79d45faa2057298ff0be37bbe16c9d9b40213"
+    "sha256": "8039f1b6e28b2f9cf5d212b1684baee4673f93e192b679c391bfe132b762c0ec"
   },
   "license": "Course Educational Asset License 1.0 (see LICENSE.md)",
   "package_version": "1.0",

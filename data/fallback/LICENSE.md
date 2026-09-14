@@ -2,7 +2,7 @@
 
 ## 2. Authorship and provenance
 
-The visual target, backgrounds, motion, occluder, lighting transformations, videos, and metadata in this directory are generated entirely by `assignment3/data/generate_fallback.py`, authored for 16-720 Computer Vision Fall 2026. They contain no photographs, personal data, trademarks used as source art, pretrained generative output, or third-party visual content.
+The visual target, backgrounds, motion, occluder, lighting transformations, videos, and metadata in this directory are generated entirely by `generate_fallback.py` in the `data` folder, written for 16-720 Computer Vision Fall 2026. They contain no photographs, personal data, trademarks used as source art, pretrained generative output, or third-party visual content.
 
 ## 3. Permission
 
@@ -12,6 +12,6 @@ Redistribution of the unmodified package for those purposes must retain this not
 
 ## 4. Attribution
 
-Use: `16-720 Computer Vision Fall 2026 course-authored PA3 fallback package, version 1.0`.
+Use: `16-720 Computer Vision Fall 2026 course-made PA3 fallback package, version 1.0`.
 
-The generator source remains governed by the repository's software license, if any; this notice covers the generated media and metadata only.
+The generator source remains governed by the repository's software license, if any. This notice covers the generated media and metadata only.

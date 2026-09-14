@@ -1,5 +1,5 @@
 {
-  "authorship": "course-authored procedural imagery; no third-party visual content",
+  "authorship": "course-made procedural imagery with no third-party visual content",
   "clips": {
     "baseline": {
       "changed_factor": "none",
@@ -15169,7 +15169,7 @@
   "package_version": "1.0",
   "schema_version": 1,
   "seed": 16720,
-  "student_requirement": "manual annotations remain required; oracle metadata is for verification",
+  "student_requirement": "hand-marked corners are still required, and these values are only for checking them",
   "target_size": [
     192,
     128
