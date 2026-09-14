@@ -16,11 +16,13 @@ from typing import Any
 import numpy as np
 
 from common.pa3_utils import (
+    EPS,
     bilinear_sample,
     from_homogeneous,
     gaussian_pyramid,
     image_gradients,
     to_homogeneous,
+    validate_xy,
 )
 
 

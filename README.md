@@ -99,8 +99,8 @@ Upload `pa3_starter.ipynb` to Colab, then upload the complete repository ZIP whe
 the first cell prompts for it. In the Files pane, open `student/pa3.py`, save your
 edits, and run the notebook's reload cell before rerunning dependent cells.
 Download edited code regularly; saving the notebook does not back up separate
-runtime files. Download the executed notebook separately with
-File → Download → Download .ipynb.
+runtime files. The final backup cell downloads code and figures. Download the
+executed notebook separately with File → Download → Download .ipynb.
 
 The notebook saves supplied figures to `artifacts/`. Save your added figures there
 too, upload them alongside `answer_template.tex` in Overleaf, and replace each
