@@ -94,9 +94,9 @@ Upload to **PA3 Code**:
 4. one still image from the Hero Result.
 
 **Optional Slack showcase (+1).** After you submit on Gradescope, post your Hero
-Result file, or a link to your HTML page, in the course Slack channel named in
-Section 12 of the [assignment PDF](assignment_instructions.pdf), within 24 hours
-after the deadline. The Slack post does not replace the Gradescope upload.
+Result file, or a link to your HTML page, in the course Slack channel
+`#showcase-hw3`, within 24 hours after the deadline. The Slack post does not
+replace the Gradescope upload.
 
 Before submitting, run the public tests in a clean process, run the notebook in
 a fresh runtime, check the compiled PDF, and play the Hero Result outside Colab.
