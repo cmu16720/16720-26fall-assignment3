@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| Release | October 27, 2026 |
+| Release | October 30, 2026 |
 | Due | November 24, 2026, 11:59 pm ET |
 | Credit | 100 points, plus up to 10 optional points |
 | Expected effort | 10+ hours |
@@ -27,6 +27,8 @@ before starting.
 - Write your answers in [`answer_template.tex`](answer_template.tex).
 - Run [`tests/test_pa3_public.py`](tests/test_pa3_public.py) for public checks.
 - See [`data/PROVENANCE.md`](data/PROVENANCE.md) for data sources and privacy notes.
+
+See [`expected_outputs.md`](expected_outputs.md) for debugging ranges and common failure symptoms.
 
 ## Local setup
 
