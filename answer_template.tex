@@ -1,134 +1,147 @@
 \documentclass[11pt]{article}
 
 \usepackage[letterpaper,margin=1in]{geometry}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{booktabs}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{array,booktabs,graphicx}
+\usepackage[table]{xcolor}
 \usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
 
-\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.6em}
+\setlist{leftmargin=*,itemsep=0.35em,topsep=0.35em}
 
-\newcommand{\studentname}{YOUR NAME}
-\newcommand{\andrewid}{YOUR ANDREW ID}
-\newcommand{\answerlabel}[2]{%
-  \clearpage
-  \section*{#1: #2}
-  \addcontentsline{toc}{section}{#1: #2}
+\newcommand{\studentname}{Your name}
+\newcommand{\andrewid}{Your Andrew ID}
+\newcommand{\collaborators}{List collaborators or write ``None''}
+\newcommand{\response}{\textcolor{blue}{\emph{Replace this text with your response.}}}
+\newcommand{\answerheading}[3]{%
+  \section*{#1: #2 \hfill [#3 points]}
+  \label{pa3:#1}
+  \hrule
+  \vspace{0.5em}
 }
-\newenvironment{response}{\color{black}}{}
+\newcommand{\firstanswersection}[3]{\answerheading{#1}{#2}{#3}}
+\newcommand{\answersection}[3]{\clearpage\answerheading{#1}{#2}{#3}}
+\newcommand{\subanswer}[1]{\textbf{#1}\quad\response\par}
+\newcommand{\evidencebox}[1]{%
+  \begin{center}
+  \fcolorbox{black}{gray!8}{%
+    \parbox[c][1.35in][c]{0.9\linewidth}{\centering
+      \textcolor{blue}{\emph{Insert #1 here.}}}}
+  \end{center}
+}
 
 \begin{document}
 
 \begin{center}
-  {\Large 16-720 Computer Vision, Fall 2026}\\[0.4em]
-  {\LARGE Programming Assignment 3: Geometry in Motion}\\[1em]
-  \textbf{Name:} \studentname \hfill \textbf{Andrew ID:} \andrewid
+  {\Large\bfseries 16-720 Computer Vision, Fall 2026}\\[0.35em]
+  {\large\bfseries Programming Assignment 3 Written Responses}
 \end{center}
 
-\tableofcontents
+\begin{tabular}{@{}ll@{}}
+\textbf{Name:} & \studentname \\
+\textbf{Andrew ID:} & \andrewid \\
+\textbf{Collaborators:} & \collaborators
+\end{tabular}
 
-\answerlabel{A1}{Derive the DLT constraints}
-\begin{response}
-% Answer A1.1 to A1.5 here. Keep every subpart labeled.
-\textbf{A1.1}\par
-\textbf{A1.2}\par
-\textbf{A1.3}\par
-\textbf{A1.4}\par
-\textbf{A1.5}\par
-\end{response}
+\firstanswersection{A1}{Derive the DLT constraints}{9}
+\subanswer{A1.1}
+\subanswer{A1.2}
+\subanswer{A1.3}
+\subanswer{A1.4}
+\subanswer{A1.5}
 
-\answerlabel{A2}{Normalize a small correspondence set}
-\begin{response}
-\textbf{A2.1}\par
-\textbf{A2.2}\par
-\textbf{A2.3}\par
-\textbf{A2.4}\par
-\textbf{A2.5}\par
-\end{response}
+\answersection{A2}{Normalize a small correspondence set}{5}
+\subanswer{A2.1}
+\subanswer{A2.2}
+\subanswer{A2.3}
+\subanswer{A2.4}
+\subanswer{A2.5}
 
-\answerlabel{A3}{RANSAC sampling without replacement}
-\begin{response}
-\textbf{A3.1}\par
-\textbf{A3.2}\par
-\textbf{A3.3}\par
-\textbf{A3.4}\par
-\end{response}
+\answersection{A3}{RANSAC sampling without replacement}{5}
+\subanswer{A3.1}
+\subanswer{A3.2}
+\subanswer{A3.3}
+\subanswer{A3.4}
 
-\answerlabel{A4}{Local motion with additive brightness change}
-\begin{response}
-\textbf{A4.1}\par
-\textbf{A4.2}\par
-\textbf{A4.3}\par
-\textbf{A4.4}\par
-\textbf{A4.5}\par
-\end{response}
+\answersection{A4}{Local motion with additive brightness change}{6}
+\subanswer{A4.1}
+\subanswer{A4.2}
+\subanswer{A4.3}
+\subanswer{A4.4}
+\subanswer{A4.5}
 
-\answerlabel{B1}{Read the geometry pipeline}
-\begin{response}
-\textbf{B1.1}\par
-\textbf{B1.2}\par
-\textbf{B1.3}\par
-\textbf{B1.4}\par
-\textbf{B1.5}\par
-\end{response}
+\answersection{B1}{Read the geometry pipeline}{5}
+\subanswer{B1.1}
+\subanswer{B1.2}
+\subanswer{B1.3}
+\subanswer{B1.4}
+\subanswer{B1.5}
 
-\answerlabel{B2}{Normalized DLT evidence}
-\begin{response}
+\answersection{B2}{Normalized DLT evidence}{10}
 Summarize your implementation choices, tests, and any numerical failures. Refer to notebook figures instead of copying code.
-\end{response}
 
-\answerlabel{B3}{RANSAC evaluation}
-\begin{response}
+\response
+\evidencebox{your implementation tests and numerical results}
+
+\answersection{B3}{RANSAC evaluation}{9}
 Include the outlier-fraction table with corner error, precision, recall, and runtime, and your interpretation.
-\end{response}
 
-\answerlabel{B4}{Coarse-to-fine Lucas-Kanade translation}
-\begin{response}
+\response
+\evidencebox{the outlier-fraction table with corner error, precision, recall, and runtime}
+
+\answersection{B4}{Coarse-to-fine Lucas-Kanade translation}{11}
 Include the pyramid and sign checks, level traces, plots, the \texttt{wall} figure, and the starting point versus brightness analysis.
-\end{response}
 
-\answerlabel{C1}{Planar target and application}
-\begin{response}
+\response
+\evidencebox{the pyramid and sign checks, level traces, plots, and wall figure}
+
+\answersection{C1}{Planar target and application}{4}
 Describe your recording and include one raw frame, why a homography fits, and the violation you expect.
-\end{response}
 
-\answerlabel{C2}{System design and improvement}
-\begin{response}
+\response
+\evidencebox{one raw frame from your recording}
+
+\answersection{C2}{System design and improvement}{10}
 Describe the baseline state machine and validity checks, your improvement beyond that baseline with its before-and-after comparison, and the diagnostic views.
-\end{response}
 
-\answerlabel{C3}{AI-comprehension reflection}
-\begin{response}
+\response
+\evidencebox{the before-and-after comparison and diagnostic views}
+
+\answersection{C3}{AI-comprehension reflection}{6}
 Write 200 to 300 words and answer all four questions. If you did not use generative AI, follow the version for that case in the handout.
-\end{response}
 
-\answerlabel{D1}{Controlled robustness study}
-\begin{response}
+\response
+
+\answersection{D1}{Controlled robustness study}{7}
 Include the capture table, your predictions, corner error from your hand-marked corners, the DLT versus RANSAC and one-level versus four-level comparisons, one diagnostic image per condition, and your explanation.
-\end{response}
 
-\answerlabel{D2}{When a good-looking warp is wrong}
-\begin{response}
+\response
+\evidencebox{the capture table, comparison results, and one diagnostic image per condition}
+
+\answersection{D2}{When a good-looking warp is wrong}{5}
 Include the success and failure panels and answer all three questions.
-\end{response}
 
-\answerlabel{D3}{Hero Result}
-\begin{response}
+\response
+\evidencebox{the success and failure panels}
+
+\answersection{D3}{Hero Result}{8}
 Include the still image, name the Hero Result file you submitted, and state the assumptions and limitations shown in it.
-\end{response}
 
-\answerlabel{E}{Optional extension}
-\begin{response}
+\response
+\evidencebox{the Hero Result still image}
+
+\answersection{E}{Optional extension}{0--10}
 Delete this page if you did not do an extension. Say whether you posted your Hero Result in the Slack showcase.
-\end{response}
 
-\answerlabel{Acknowledgments}{Collaboration, resources, data, weights, and AI use}
-\begin{response}
+\response
+\evidencebox{optional-extension evidence}
+
+\answersection{Acknowledgments}{Collaboration, resources, data, weights, and AI use}{0}
 List every collaborator and outside resource. Describe any generative AI use in the parts where it is allowed. Write ``none'' where nothing applies.
-\end{response}
+
+\response
 
 \end{document}
