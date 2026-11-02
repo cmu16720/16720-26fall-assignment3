@@ -30,6 +30,17 @@ Each archive has six PPM images and reference homographies from image 1. Every d
 | `wall.tar.gz` | Required for graded B4 | `3cb3df75f40471f093adf6647d13df6a9f4312f7a222fc591d03f6c08e086344` |
 | `graf.tar.gz` | Optional, for debugging | `999871b945ee968a00a0d5f9af957d1382fb9dae1511cdee9553366817b53b5b` |
 
+If Oxford is unavailable, setup uses a backup pinned to
+`AnoopP7/CSS587GaLAM@1dc33faeb704ee614abda8645fa217959678d82f` (`data/wall/`).
+All six images and five homographies are individually SHA-256 checked. The hashes
+match the wall file manifest in
+`ashutoshramola/SIFTFeatures.jl@6ce1f70961c711ddf3bf4d343ba364178e0f7706`
+(`validation/oxford-sources.json`), which records the same original archive hash
+above. The original archive checksum is unchanged. Verified local wall files
+are reused without a network connection; interrupted or incorrect downloads
+are never accepted. Each network operation has a 15-second socket timeout.
+No experiment, required data, or grading requirement changes.
+
 The repository does not include these archives. They are downloaded from the publisher for course use. Check the publisher's current terms before sharing them further. The required B4 experiment uses `wall/img1.ppm` to `wall/img2.ppm` with `wall/H1to2p`. Neither set counts for Parts C or D.
 
 ## 4. Student footage and the approved fallback

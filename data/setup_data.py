@@ -9,6 +9,7 @@ from pathlib import Path
 import shutil
 import sys
 import tarfile
+import tempfile
 import urllib.request
 
 import numpy as np
@@ -50,6 +51,27 @@ ASSETS = {
 }
 
 REQUIRED_B4_ASSET = "wall"
+
+# Pinned backup of the original Oxford files. Every file is checked before use.
+WALL_MIRROR = (
+    "https://raw.githubusercontent.com/AnoopP7/CSS587GaLAM/"
+    "1dc33faeb704ee614abda8645fa217959678d82f/data/wall/"
+)
+WALL_FILE_SHA256 = {
+    "H1to2p": "5106d4e1e974c1cfdb2cb362a68b35fc810e0878341ec0bb8bfa16093221b0a0",
+    "H1to3p": "97d5e44fe81e8310693f55ca1a17bee766401a5581d366716111f157606cabe9",
+    "H1to4p": "cd4bbb982060e5142d90d4da431c27104aaf6a923260be0d6e8bb2970a540095",
+    "H1to5p": "d547753f4e5b904faf25da29ff3f20ed19dc4498b6a3065f9ee5cce7c88eb9ea",
+    "H1to6p": "13e7c93bdc31fcc0f56bb819e0b51deb109e81cf8a9d7adbc269b66587e8abef",
+    "img1.ppm": "96140c5a649f6cfaf002fc06fdd97f22e7eec322d19aa522d9f198e90258419c",
+    "img2.ppm": "e7a4a1ea610ee1e4c8c21654c3200764f4a405b92b814d230cf219fb2ae27b6a",
+    "img3.ppm": "7f21d250f008e5cbd55cca6fc342dfd175c730728ccc39280cc0ed91a05738c1",
+    "img4.ppm": "a1fdfdbf4daa8afd6dc6fd1a0ba41151f9a9f1ca6475ed29864cc4099296c2d1",
+    "img5.ppm": "4114ddb2fd6dcaf47047b437c10a0a8d9280f6a014d5268907b0776e6cb4745e",
+    "img6.ppm": "5ff1c5e013cc6f5cf2936b9a1e0eef2b01155356b9346bea9faa47edbe98363e"
+}
+DOWNLOAD_TIMEOUT = 15
+
 
 
 def sha256(path: Path) -> str:
@@ -140,6 +162,36 @@ def _safe_extract(archive: Path, destination: Path) -> None:
                 raise RuntimeError(f"archive contains unsupported member type: {member.name}")
 
 
+def _download_verified(url: str, destination: Path, expected: str) -> None:
+    """Only replace a cached file after a complete, checksum-valid download."""
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as temp:
+        temporary = Path(temp.name)
+    try:
+        with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT) as source, temporary.open("wb") as output:
+            shutil.copyfileobj(source, output)
+        if sha256(temporary) != expected:
+            raise OSError(f"checksum mismatch for {destination.name} from {url}")
+        temporary.replace(destination)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _wall_files_valid(destination: Path) -> bool:
+    return all(
+        (destination / name).is_file() and sha256(destination / name) == expected
+        for name, expected in WALL_FILE_SHA256.items()
+    )
+
+
+def _download_wall_mirror(destination: Path) -> list[Path]:
+    for name, expected in WALL_FILE_SHA256.items():
+        path = destination / name
+        if not path.is_file() or sha256(path) != expected:
+            _download_verified(WALL_MIRROR + name, path, expected)
+    return sorted(destination / name for name in WALL_FILE_SHA256)
+
+
 def download_external(output_root: Path, asset_names: tuple[str, ...] | None = None) -> list[Path]:
     """Download, verify, and extract selected Oxford VGG sequences.
 
@@ -162,9 +214,20 @@ def download_external(output_root: Path, asset_names: tuple[str, ...] | None = N
     for name in names:
         metadata = ASSETS[name]
         archive_path = archive_root / f"{name}.tar.gz"
+        destination = sequence_root / name
+        if name == "wall" and _wall_files_valid(destination):
+            written.extend(sorted(destination / file for file in WALL_FILE_SHA256))
+            continue
         if not archive_path.exists() or sha256(archive_path) != metadata["sha256"]:
             print(f"Downloading {name} from {metadata['url']}")
-            urllib.request.urlretrieve(metadata["url"], archive_path)
+            try:
+                _download_verified(metadata["url"], archive_path, metadata["sha256"])
+            except OSError as error:
+                if name != "wall":
+                    raise
+                print(f"Oxford download unavailable ({error}); trying verified wall backup.")
+                written.extend(_download_wall_mirror(destination))
+                continue
         actual = sha256(archive_path)
         if actual != metadata["sha256"]:
             raise RuntimeError(f"checksum mismatch for {name}: expected {metadata['sha256']}, received {actual}")
